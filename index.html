@@ -1,0 +1,316 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a12">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Neon Serpent — Snake Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-glow bg-glow--1"></div>
+  <div class="bg-glow bg-glow--2"></div>
+  <div class="bg-glow bg-glow--3"></div>
+
+  <div id="game-container">
+    <header class="header">
+      <div class="header-row">
+        <div class="logo">
+          <span class="logo-icon">◈</span>
+          <h1>Neon Serpent</h1>
+        </div>
+        <button id="settings-btn" class="icon-btn" type="button" aria-label="Game settings">⚙</button>
+      </div>
+      <p class="tagline">Grow. Glow. Survive.</p>
+    </header>
+
+    <div class="hud">
+      <div class="stat-card">
+        <span class="stat-label">Score</span>
+        <span id="score" class="stat-value">0</span>
+      </div>
+      <div class="stat-card stat-card--accent">
+        <span class="stat-label">Best</span>
+        <span id="high-score" class="stat-value">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Length</span>
+        <span id="length" class="stat-value">3</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Speed</span>
+        <span id="speed-level" class="stat-value">1×</span>
+      </div>
+    </div>
+
+    <div class="canvas-wrapper">
+      <canvas id="game-canvas" tabindex="0" aria-label="Snake game board"></canvas>
+      <div class="canvas-border"></div>
+    </div>
+
+    <div id="controls-hint" class="controls-hint controls-hint--keyboard">
+      <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd>
+      <span>or</span>
+      <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
+      <span>to move</span>
+      <span class="divider">·</span>
+      <kbd>Space</kbd><span>pause</span>
+    </div>
+
+    <p id="controls-hint-touch" class="controls-hint controls-hint--touch">
+      Swipe on the board or use the pad below
+    </p>
+
+    <p id="controls-hint-gesture" class="controls-hint controls-hint--gesture">
+      <span id="gesture-status-dot" class="gesture-dot"></span>
+      <span id="gesture-status-text">Point index finger to steer · fist to pause</span>
+    </p>
+
+    <div id="touch-controls" class="touch-controls" aria-label="On-screen game controls">
+      <div class="dpad">
+        <button type="button" class="dpad-btn dpad-btn--up" data-dir="up" aria-label="Move up">▲</button>
+        <button type="button" class="dpad-btn dpad-btn--left" data-dir="left" aria-label="Move left">◀</button>
+        <button type="button" class="dpad-btn dpad-btn--pause" id="pause-btn" aria-label="Pause game">⏸</button>
+        <button type="button" class="dpad-btn dpad-btn--right" data-dir="right" aria-label="Move right">▶</button>
+        <button type="button" class="dpad-btn dpad-btn--down" data-dir="down" aria-label="Move down">▼</button>
+      </div>
+    </div>
+
+    <div id="overlay" class="overlay visible">
+      <div class="overlay-panel">
+        <div class="panel-glow"></div>
+        <h2>Ready to Slither?</h2>
+        <p class="panel-desc">
+          Guide the neon serpent across the grid. Eat glowing orbs to grow longer and rack up points — but don't bite your own tail or hit the walls.
+        </p>
+        <ul class="panel-tips">
+          <li><span class="tip-dot tip-dot--green"></span>Each orb adds length &amp; speed</li>
+          <li><span class="tip-dot tip-dot--pink"></span>Golden orbs are worth 3× points</li>
+          <li><span class="tip-dot tip-dot--cyan"></span>Pause with <kbd>Space</kbd> or the center button</li>
+          <li class="tip-touch"><span class="tip-dot tip-dot--purple"></span>On mobile: swipe, D-pad, or hand gestures in Settings</li>
+          <li class="tip-gesture"><span class="tip-dot tip-dot--purple"></span>Enable hand gestures in ⚙ Settings for camera control</li>
+        </ul>
+        <button id="start-btn" class="btn btn--primary">
+          <span class="btn-text">Start Game</span>
+          <span class="btn-shine"></span>
+        </button>
+        <button id="open-settings-start" class="btn btn--ghost" type="button">⚙ Control Settings</button>
+      </div>
+    </div>
+
+    <div id="settings-overlay" class="overlay hidden">
+      <div class="overlay-panel overlay-panel--settings">
+        <div class="panel-glow panel-glow--purple"></div>
+        <h2>Control Settings</h2>
+        <p class="panel-desc">Choose how you steer the serpent on this device.</p>
+
+        <div class="settings-group">
+          <span class="settings-label">Control mode</span>
+          <div class="mode-picker" role="radiogroup" aria-label="Control mode">
+            <label class="mode-option">
+              <input type="radio" name="control-mode" value="touch" checked>
+              <span class="mode-card">
+                <strong>Touch</strong>
+                <small>Swipe &amp; on-screen pad</small>
+              </span>
+            </label>
+            <label class="mode-option">
+              <input type="radio" name="control-mode" value="gestures">
+              <span class="mode-card">
+                <strong>Hand Gestures</strong>
+                <small>Camera + finger pointing</small>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div id="gesture-settings" class="gesture-settings hidden">
+          <div class="settings-group">
+            <label class="settings-label" for="gesture-sensitivity">
+              Point sensitivity
+              <span id="sensitivity-value" class="settings-value">Medium</span>
+            </label>
+            <input type="range" id="gesture-sensitivity" min="1" max="3" step="1" value="2">
+            <div class="range-labels"><span>Low</span><span>High</span></div>
+          </div>
+
+          <label class="toggle-row">
+            <span>Mirror camera (selfie view)</span>
+            <input type="checkbox" id="mirror-camera" checked>
+            <span class="toggle-switch"></span>
+          </label>
+
+          <label class="toggle-row">
+            <span>Show camera preview</span>
+            <input type="checkbox" id="show-preview" checked>
+            <span class="toggle-switch"></span>
+          </label>
+
+          <label class="toggle-row">
+            <span>Pause with closed fist</span>
+            <input type="checkbox" id="pause-gesture" checked>
+            <span class="toggle-switch"></span>
+          </label>
+
+          <div class="gesture-guide">
+            <p><strong>How to play with gestures</strong></p>
+            <ul>
+              <li>Hold phone at arm's length, front camera facing you</li>
+              <li>Extend index finger and point up/down/left/right</li>
+              <li>Close fist for ~½ second to pause</li>
+            </ul>
+          </div>
+        </div>
+
+        <p id="settings-error" class="settings-error hidden"></p>
+
+        <div class="settings-actions">
+          <button id="save-settings-btn" class="btn btn--primary" type="button">Save Settings</button>
+          <button id="close-settings-btn" class="btn btn--secondary" type="button">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="camera-preview" class="camera-preview hidden" aria-hidden="true">
+      <video id="gesture-video" playsinline muted autoplay></video>
+      <canvas id="gesture-canvas"></canvas>
+      <span class="camera-badge">GESTURE CAM</span>
+    </div>
+
+    <div id="pause-overlay" class="overlay hidden">
+      <div class="overlay-panel overlay-panel--small">
+        <h2>Paused</h2>
+        <p class="pause-hint-desktop">Press <kbd>Space</kbd> or click below to continue</p>
+        <p class="pause-hint-touch">Tap Resume, the center pad, or open fist again</p>
+        <p class="pause-hint-gesture">Unpause with Resume or open your fist again</p>
+        <button id="resume-btn" class="btn btn--secondary">Resume</button>
+      </div>
+    </div>
+
+    <div id="game-over" class="overlay hidden">
+      <div class="overlay-panel overlay-panel--gameover">
+        <div class="panel-glow panel-glow--red"></div>
+        <h2>Game Over</h2>
+        <p id="final-score" class="final-score">Score: 0</p>
+        <p id="final-message" class="final-message">Nice try!</p>
+        <button id="restart-btn" class="btn btn--primary">
+          <span class="btn-text">Play Again</span>
+          <span class="btn-shine"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="gestures.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Serpent — Snake Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-glow bg-glow--1"></div>
+  <div class="bg-glow bg-glow--2"></div>
+  <div class="bg-glow bg-glow--3"></div>
+
+  <div id="game-container">
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">◈</span>
+        <h1>Neon Serpent</h1>
+      </div>
+      <p class="tagline">Grow. Glow. Survive.</p>
+    </header>
+
+    <div class="hud">
+      <div class="stat-card">
+        <span class="stat-label">Score</span>
+        <span id="score" class="stat-value">0</span>
+      </div>
+      <div class="stat-card stat-card--accent">
+        <span class="stat-label">Best</span>
+        <span id="high-score" class="stat-value">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Length</span>
+        <span id="length" class="stat-value">3</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Speed</span>
+        <span id="speed-level" class="stat-value">1×</span>
+      </div>
+    </div>
+
+    <div class="canvas-wrapper">
+      <canvas id="game-canvas" width="600" height="600" tabindex="0" aria-label="Snake game board"></canvas>
+      <div class="canvas-border"></div>
+    </div>
+
+    <div id="controls-hint" class="controls-hint">
+      <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd>
+      <span>or</span>
+      <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
+      <span>to move</span>
+      <span class="divider">·</span>
+      <kbd>Space</kbd><span>pause</span>
+    </div>
+
+    <div id="overlay" class="overlay visible">
+      <div class="overlay-panel">
+        <div class="panel-glow"></div>
+        <h2>Ready to Slither?</h2>
+        <p class="panel-desc">
+          Guide the neon serpent across the grid. Eat glowing orbs to grow longer and rack up points — but don't bite your own tail or hit the walls.
+        </p>
+        <ul class="panel-tips">
+          <li><span class="tip-dot tip-dot--green"></span>Each orb adds length &amp; speed</li>
+          <li><span class="tip-dot tip-dot--pink"></span>Golden orbs are worth 3× points</li>
+          <li><span class="tip-dot tip-dot--cyan"></span>Press <kbd>Space</kbd> to pause anytime</li>
+        </ul>
+        <button id="start-btn" class="btn btn--primary">
+          <span class="btn-text">Start Game</span>
+          <span class="btn-shine"></span>
+        </button>
+      </div>
+    </div>
+
+    <div id="pause-overlay" class="overlay hidden">
+      <div class="overlay-panel overlay-panel--small">
+        <h2>Paused</h2>
+        <p>Press <kbd>Space</kbd> or click below to continue</p>
+        <button id="resume-btn" class="btn btn--secondary">Resume</button>
+      </div>
+    </div>
+
+    <div id="game-over" class="overlay hidden">
+      <div class="overlay-panel overlay-panel--gameover">
+        <div class="panel-glow panel-glow--red"></div>
+        <h2>Game Over</h2>
+        <p id="final-score" class="final-score">Score: 0</p>
+        <p id="final-message" class="final-message">Nice try!</p>
+        <button id="restart-btn" class="btn btn--primary">
+          <span class="btn-text">Play Again</span>
+          <span class="btn-shine"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
+>>>>>>> add7aeac67cc6f1765a20b01ec1a949d9775afe4
